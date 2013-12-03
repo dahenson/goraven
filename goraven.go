@@ -1,3 +1,4 @@
+// A simple library for interacting with the Rainforest Automation RAVEn
 package goraven
 
 import (
@@ -53,9 +54,8 @@ func (r *Raven) simpleCommand(command string) error {
 	return err
 }
 
-// ****************************************************************************
 // RAVEn Feature Set
-// ****************************************************************************
+// *****************
 
 // Reinitialize the XML parser on the device. Use this command when first
 // connecting to the RAVEn prior to sending any other commands. Initialization
@@ -101,18 +101,18 @@ func (r *Raven) GetSchedule() error {
 // Update the RAVEn scheduler. The command options include setting the
 // frequency of the command in seconds, and disabling the event. If the event
 // is disabled the frequency is set to 0xFFFFFFFF
-func SetSchedule(event string, frequency int, enabled bool) {
+func (r *Raven) SetSchedule(event string, frequency int, enabled bool) {
 }
 
 // Reset the RAVEn scheduler to default settings. If the Event field is set,
 // only that schedule item is reset to default values; otherwise all schedule
 // items are reset to their default values.
-func SetScheduleDefault(event string) {
+func (r *Raven) SetScheduleDefault(event string) {
 }
 
 // Get the list of meters the RAVEn is connected to. The RAVEn will send a
 // MeterList notification in response.
-func GetMeterList() {
+func (r *Raven) GetMeterList() {
 }
 
 // Notify: ConnectionStatus
@@ -159,9 +159,8 @@ type meterList struct {
 	MeterMacId  []string `xml:"MeterMacId,omitempty"`
 }
 
-// ****************************************************************************
 // Meter Feature Set
-// ****************************************************************************
+// *****************
 
 // Get the meter information. The RAVEn will send a MeterInfo notification in
 // response.
@@ -175,37 +174,33 @@ func (r *Raven) GetNetworkInfo() error {
 	return r.simpleCommand("get_network_info")
 }
 
-func SetMeterInfo() {
+func (r *Raven) SetMeterInfo() {
 }
 
-// ****************************************************************************
 // Time Feature Set
-// ****************************************************************************
-func GetTime() {
+// ****************
+func (r *Raven) GetTime() {
 }
 
-// ****************************************************************************
 // Message Feature Set
-// ****************************************************************************
-func GetMessage() {
+// *******************
+func (r *Raven) GetMessage() {
 }
 
-// ****************************************************************************
 // Price Feature Set
-// ****************************************************************************
-func GetCurrentPrice() {
+// *****************
+func (r *Raven) GetCurrentPrice() {
 }
 
-func SetCurrentPrice() {
+func (r *Raven) SetCurrentPrice() {
 }
 
-// ****************************************************************************
 // Simple Metering Feature Set
-// ****************************************************************************
-func GetInstantaneousDemand() {
+// ***************************
+func (r *Raven) GetInstantaneousDemand() {
 }
 
-func GetCurrentSummationDelivered() {
+func (r *Raven) GetCurrentSummationDelivered() {
 }
 
 // Get the accumulated usage information from the RAVEn. The RAVEn will send
@@ -228,8 +223,8 @@ func (r *Raven) CloseCurrentPeriod() error {
 	return r.simpleCommand("close_current_period")
 }
 
-func SetFastPoll() {
+func (r *Raven) SetFastPoll() {
 }
 
-func GetProfileData() {
+func (r *Raven) GetProfileData() {
 }
