@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bitbucket.org/LocalHero/libraven"
+	"github.com/dahenson/go-raven"
 	"flag"
 	"fmt"
 	"log"
@@ -45,7 +45,7 @@ func parseFlags() {
 func main() {
 	parseFlags()
 
-	r, err := libraven.Connect("/dev/ttyUSB0")
+	r, err := goraven.Connect("/dev/ttyUSB0")
 	if err != nil {
 		log.Fatal(err)
 	}
