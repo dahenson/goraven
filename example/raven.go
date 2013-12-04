@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/dahenson/go-raven"
+	"github.com/dahenson/goraven"
 	"flag"
 	"fmt"
 	"log"
