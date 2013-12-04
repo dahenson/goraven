@@ -48,3 +48,11 @@ func (r *Raven) simpleCommand(command string) error {
 	}
 	return nil
 }
+
+func (r *Raven) sendCommand(sc interface{}) error {
+	enc := xml.NewEncoder(r.p)
+	if err := enc.Encode(sc); err != nil {
+		return err
+	}
+	return nil
+}

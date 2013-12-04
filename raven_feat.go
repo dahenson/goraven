@@ -66,6 +66,15 @@ func (r *Raven) GetMeterList() error {
 	return r.simpleCommand("get_meter_list")
 }
 
+// Generic schedule command
+type scheduleCommand struct {
+	XMLName xml.Name `xml:"Name"`
+	MeterMacId string `xml:"MeterMacId,omitempty"`
+	Event string `xml:"Event,omitempty"`
+	Frequency string `xml:"Frequency,omitempty"`
+	Enabled string `xml:"Enabled,omitempty"`
+}
+
 // Notify: ConnectionStatus
 type connectionStatus struct {
 	XMLName      xml.Name `xml:"ConnectionStatus"`
@@ -96,11 +105,11 @@ type deviceInfo struct {
 // Notify: ScheduleInfo
 type scheduleInfo struct {
 	XMLName     xml.Name `xml:"ScheduleInfo"`
-	DeviceMacId string   `xml:"DeviceMacId,omitempty"`
+	DeviceMacId string   `xml:"DeviceMacId"`
 	MeterMacId  string   `xml:"MeterMacId,omitempty"`
-	Event       string   `xml:"Event,omitempty"`
-	Frequency   string   `xml:"Frequency,omitempty"`
-	Enabled     string   `xml:"Enabled,omitempty"`
+	Event       string   `xml:"Event"`
+	Frequency   string   `xml:"Frequency"`
+	Enabled     string   `xml:"Enabled"`
 }
 
 // Notify: MeterList
