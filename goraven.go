@@ -19,14 +19,14 @@ type Raven struct {
 	p *sio.Port
 }
 
-// The structure for a simple command with a single argument (name)
+// The structure for a simple command with a single argument (Name)
 type smplCommand struct {
-	XMLName    xml.Name `xml:"Command"`
-	Name       string   `xml:"Name"`
+	XMLName xml.Name `xml:"Command"`
+	Name    string   `xml:"Name"`
 }
 
-// Connect to a RAVEn, given the port name (/dev/ttyUSB0)
-func Connect(dev string) (r *Raven, err error) {
+// Connect opens a connection to a RAVEn, given the port name (/dev/ttyUSB0)
+func Connect(dev string) (*Raven, error) {
 	p, err := sio.Open(dev, syscall.B115200)
 	if err != nil {
 		return nil, err
@@ -34,8 +34,8 @@ func Connect(dev string) (r *Raven, err error) {
 	return &Raven{p}, nil
 }
 
-// Closes the RAVEn's port safely
-func (r *Raven) Disconnect() (err error) {
+// Disconnect closes the RAVEn's port safely
+func (r *Raven) Disconnect() error {
 	return r.p.Close()
 }
 
@@ -54,3 +54,6 @@ func (r *Raven) simpleCommand(command string) error {
 	return err
 }
 
+func (r *Raven) scheduleCommand(sched scheduleInfo) error {
+	return err
+}

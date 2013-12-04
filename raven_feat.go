@@ -1,61 +1,65 @@
 package goraven
 
-// Reinitialize the XML parser on the device. Use this command when first
-// connecting to the RAVEn prior to sending any other commands. Initialization
-// is not required, but will speed up the initial connection.
+// Intitialize reinitializes the XML parser on the device. Use this command when
+// first connecting to the RAVEn prior to sending any other commands.
+// Initialization is not required, but will speed up the initial connection.
 func (r *Raven) Initialize() error {
 	return r.simpleCommand("initialize")
 }
 
-// Force the RAVEn to go through the start-up sequence. This command is
+// Restart forces the RAVEn to go through the start-up sequence. This command is
 // useful for capturing any diagnostic information sent during the start-up
 // sequence.
 func (r *Raven) Restart() error {
 	return r.simpleCommand("restart")
 }
 
-// Reset the RAVEn. This command will erase the commissioning data and force a
-// restart. On restart, the RAVEn will begin the commissioning cycle.
+// FactoryReset resets the RAVEn. This command will erase the commissioning data
+// and force a restart. On restart, the RAVEn will begin the commissioning
+// cycle.
 func (r *Raven) FactoryReset() error {
 	return r.simpleCommand("factory_reset")
 }
 
-// Get the RAVEn connection information. The RAVEn will send a ConnectionStatus
-// notification in response. The RAVEn continuously sends ConnectionStatus
-// during the start-up sequence and during the join/re-join sequence for
-// diagnostic purposes.
+// GetConnectionStatus gets the RAVEn connection information. The RAVEn will
+// send a ConnectionStatus notification in response. The RAVEn continuously
+// sends ConnectionStatus during the start-up sequence and during the
+// join/re-join sequence for diagnostic purposes.
 func (r *Raven) GetConnectionStatus() error {
 	return r.simpleCommand("get_connection_status")
 }
 
-// Get RAVEn configuration information. The RAVEn will send a DeviceInfo
-// notification in response.
+// GetDeviceInfo gets RAVEn configuration information. The RAVEn will send a
+// DeviceInfo notification in response.
 func (r *Raven) GetDeviceInfo() error {
 	return r.simpleCommand("get_device_info")
 }
 
-// Get the RAVEn scheduler information. The RAVEn will send the ScheduleInfo
-// notification in response; or, RAVEn will send a series of ScheduleInfo
-// notifications if the Event field is omitted.
+// GetSchedule gets the RAVEn scheduler information. The RAVEn will send the
+// ScheduleInfo notification in response; or, RAVEn will send a series of
+// ScheduleInfo notifications if the Event field is omitted.
 func (r *Raven) GetSchedule() error {
 	return r.simpleCommand("get_schedule")
 }
 
-// Update the RAVEn scheduler. The command options include setting the
-// frequency of the command in seconds, and disabling the event. If the event
-// is disabled the frequency is set to 0xFFFFFFFF
+// SetSchedule updates the RAVEn scheduler. The command options include setting
+// the frequency of the command in seconds, and disabling the event. If the
+// event is disabled the frequency is set to 0xFFFFFFFF
 func (r *Raven) SetSchedule(event string, frequency int, enabled bool) {
 }
 
-// Reset the RAVEn scheduler to default settings. If the Event field is set,
-// only that schedule item is reset to default values; otherwise all schedule
-// items are reset to their default values.
-func (r *Raven) SetScheduleDefault(event string) {
+// SetScheduleDefault resets the RAVEn scheduler to default settings. If the
+// Event field is set, only that schedule item is reset to default values;
+// otherwise all schedule items are reset to their default values.
+func (r *Raven) SetScheduleDefault() error {
+	// TODO: add Event(optional) and MeterMacId (optional)
+	return r.simpleCommand("set_schedule_default")
 }
 
-// Get the list of meters the RAVEn is connected to. The RAVEn will send a
-// MeterList notification in response.
-func (r *Raven) GetMeterList() {
+// GetMeterList gets the list of meters the RAVEn is connected to. The RAVEn
+// will send a MeterList notification in response.
+func (r *Raven) GetMeterList() error {
+	return r.simpleCommand("get_meter_list")
 }
 
 // Notify: ConnectionStatus
@@ -88,11 +92,11 @@ type deviceInfo struct {
 // Notify: ScheduleInfo
 type scheduleInfo struct {
 	XMLName     xml.Name `xml:"ScheduleInfo"`
-	DeviceMacId string   `xml:"DeviceMacId"`
+	DeviceMacId string   `xml:"DeviceMacId,omitempty"`
 	MeterMacId  string   `xml:"MeterMacId,omitempty"`
-	Event       string   `xml:"Event"`
-	Frequency   string   `xml:"Frequency"`
-	Enabled     string   `xml:"Enabled"`
+	Event       string   `xml:"Event,omitempty"`
+	Frequency   string   `xml:"Frequency,omitempty"`
+	Enabled     string   `xml:"Enabled,omitempty"`
 }
 
 // Notify: MeterList
