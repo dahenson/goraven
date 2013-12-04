@@ -42,18 +42,9 @@ func (r *Raven) Disconnect() error {
 // Send a simple command
 func (r *Raven) simpleCommand(command string) error {
 	sc := &smplCommand{Name: command}
-	b, err := xml.Marshal(sc)
-	if err != nil {
+	enc := xml.NewEncoder(r.p)
+	if err := enc.Encode(sc); err != nil {
 		return err
 	}
-
-	_, err = r.p.Write(b)
-	if err != nil {
-		return err
-	}
-	return err
-}
-
-func (r *Raven) scheduleCommand(sched scheduleInfo) error {
-	return err
+	return nil
 }

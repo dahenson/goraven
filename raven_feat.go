@@ -1,5 +1,9 @@
 package goraven
 
+import (
+	"encoding/xml"
+)
+
 // Intitialize reinitializes the XML parser on the device. Use this command when
 // first connecting to the RAVEn prior to sending any other commands.
 // Initialization is not required, but will speed up the initial connection.
