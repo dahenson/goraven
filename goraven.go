@@ -7,6 +7,7 @@ import (
 	"syscall"
 )
 
+// Types of events
 const (
 	TIME      = "time"
 	PRICE     = "price"
@@ -41,17 +42,14 @@ func (r *Raven) Disconnect() error {
 
 // Send a simple command
 func (r *Raven) simpleCommand(command string) error {
-	sc := &smplCommand{Name: command}
-	enc := xml.NewEncoder(r.p)
-	if err := enc.Encode(sc); err != nil {
-		return err
-	}
-	return nil
+	v := &smplCommand{Name: command}
+	return r.sendCommand(v)
 }
 
-func (r *Raven) sendCommand(sc interface{}) error {
+// Send a generic command
+func (r *Raven) sendCommand(v interface{}) error {
 	enc := xml.NewEncoder(r.p)
-	if err := enc.Encode(sc); err != nil {
+	if err := enc.Encode(v); err != nil {
 		return err
 	}
 	return nil

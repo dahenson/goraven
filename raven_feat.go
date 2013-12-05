@@ -49,15 +49,29 @@ func (r *Raven) GetSchedule() error {
 // SetSchedule updates the RAVEn scheduler. The command options include setting
 // the frequency of the command in seconds, and disabling the event. If the
 // event is disabled the frequency is set to 0xFFFFFFFF
-func (r *Raven) SetSchedule(event string, frequency int, enabled bool) {
+func (r *Raven) SetSchedule(event string, enabled bool) error {
+	v := scheduleCommand{
+		Name:      "set_schedule",
+		Event:     event,
+		Frequency: "0xFFFFFFFF", // TODO: don't hardcode this
+		Enabled:   "N",
+	}
+	if enabled {
+		v.Enabled = "Y"
+	}
+	return r.sendCommand(v)
 }
 
 // SetScheduleDefault resets the RAVEn scheduler to default settings. If the
 // Event field is set, only that schedule item is reset to default values;
 // otherwise all schedule items are reset to their default values.
-func (r *Raven) SetScheduleDefault() error {
-	// TODO: add Event(optional) and MeterMacId (optional)
-	return r.simpleCommand("set_schedule_default")
+func (r *Raven) SetScheduleDefault(event string) error {
+	v := scheduleCommand {
+		Name: "set_schedule_default",
+		Event: event,
+	}
+	// TODO: add MeterMacId (optional)
+	return r.sendCommand(v)
 }
 
 // GetMeterList gets the list of meters the RAVEn is connected to. The RAVEn
@@ -68,11 +82,12 @@ func (r *Raven) GetMeterList() error {
 
 // Generic schedule command
 type scheduleCommand struct {
-	XMLName xml.Name `xml:"Name"`
-	MeterMacId string `xml:"MeterMacId,omitempty"`
-	Event string `xml:"Event,omitempty"`
-	Frequency string `xml:"Frequency,omitempty"`
-	Enabled string `xml:"Enabled,omitempty"`
+	XMLName    xml.Name `xml:"Command"`
+	Name       string   `xml:"Name"`
+	MeterMacId string   `xml:"MeterMacId,omitempty"`
+	Event      string   `xml:"Event,omitempty"`
+	Frequency  string   `xml:"Frequency,omitempty"`
+	Enabled    string   `xml:"Enabled,omitempty"`
 }
 
 // Notify: ConnectionStatus
