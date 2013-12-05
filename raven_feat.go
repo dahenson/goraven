@@ -69,8 +69,8 @@ func (r *Raven) SetScheduleDefault(event string) error {
 	v := scheduleCommand {
 		Name: "set_schedule_default",
 		Event: event,
+		// TODO: MeterMacId: metermac,
 	}
-	// TODO: add MeterMacId (optional)
 	return r.sendCommand(v)
 }
 
@@ -80,7 +80,7 @@ func (r *Raven) GetMeterList() error {
 	return r.simpleCommand("get_meter_list")
 }
 
-// Generic schedule command
+// Command: Schedule
 type scheduleCommand struct {
 	XMLName    xml.Name `xml:"Command"`
 	Name       string   `xml:"Name"`
