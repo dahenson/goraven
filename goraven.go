@@ -2,6 +2,7 @@
 package goraven
 
 import (
+	"bufio"
 	"encoding/xml"
 	"github.com/schleibinger/sio"
 	"syscall"
@@ -17,7 +18,8 @@ const (
 )
 
 type Raven struct {
-	p *sio.Port
+	p      *sio.Port
+	reader *bufio.Reader
 }
 
 // The structure for a simple command with a single argument (Name)
@@ -32,7 +34,8 @@ func Connect(dev string) (*Raven, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Raven{p}, nil
+	r := bufio.NewReader(p)
+	return &Raven{p, r}, nil
 }
 
 // Disconnect closes the RAVEn's port safely
@@ -40,17 +43,21 @@ func (r *Raven) Disconnect() error {
 	return r.p.Close()
 }
 
-// Send a simple command
+// simpleCommand sends a simple command
 func (r *Raven) simpleCommand(command string) error {
 	v := &smplCommand{Name: command}
 	return r.sendCommand(v)
 }
 
-// Send a generic command
+// sendCommand sends a generic command
 func (r *Raven) sendCommand(v interface{}) error {
 	enc := xml.NewEncoder(r.p)
 	if err := enc.Encode(v); err != nil {
 		return err
 	}
 	return nil
+}
+
+func (r *Raven) Read() (line []byte, err error) {
+	return r.reader.ReadBytes(13) // Read until CR (line break)
 }
