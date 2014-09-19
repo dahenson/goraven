@@ -4,8 +4,10 @@ package goraven
 import (
 	"bufio"
 	"encoding/xml"
+	"errors"
 	"github.com/schleibinger/sio"
 	"syscall"
+	"bytes"
 )
 
 // Types of events
@@ -35,11 +37,15 @@ func Connect(dev string) (*Raven, error) {
 		return nil, err
 	}
 	r := bufio.NewReader(p)
+	err = initReader(r)
+	if err != nil {
+		return nil, err
+	}
 	return &Raven{p, r}, nil
 }
 
-// Disconnect closes the RAVEn's port safely
-func (r *Raven) Disconnect() error {
+// Close closes the RAVEn's port safely
+func (r *Raven) Close() error {
 	return r.p.Close()
 }
 
@@ -58,6 +64,70 @@ func (r *Raven) sendCommand(v interface{}) error {
 	return nil
 }
 
-func (r *Raven) Read() (line []byte, err error) {
-	return r.reader.ReadBytes(13) // Read until CR (line break)
+// initReader reads and discards the first message
+func initReader(r *bufio.Reader) error {
+	for {
+		line, err := r.ReadBytes(10)
+		if err != nil {
+			return err
+		}
+		if isEndElement(line) {
+			return nil
+		}
+	}
+	panic("unreachable")
+}
+
+func nextStart(dec *xml.Decoder) (xml.StartElement, error) {
+	// Find the next starting element
+	for {
+		t, err := dec.Token()
+		if err != nil {
+			return xml.StartElement{}, err
+		}
+		switch t := t.(type) {
+		case xml.StartElement:
+			return t, nil
+		}
+	}
+}
+
+// Receive grabs the next "Notify" message in the stream
+func (r *Raven) Receive() (notify interface{}, err error) {
+	dec := xml.NewDecoder(r.p)
+
+	se, err := nextStart(dec)
+	if err != nil {
+		return nil, err
+	}
+
+	switch se.Name.Local {
+	case "ConnectionStatus":
+		notify = &ConnectionStatus{}
+	case "DeviceInfo":
+		notify = &DeviceInfo{}
+	case "ScheduleInfo":
+		notify = &ScheduleInfo{}
+	case "MeterList":
+		notify = &MeterList{}
+	case "NetworkInfo":
+		notify = &NetworkInfo{}
+	case "MeterInfo":
+		notify = &MeterInfo{}
+	default:
+		return nil, errors.New("Unrecognized Notify Message")
+	}
+
+	err = dec.DecodeElement(notify, &se)
+	return notify, err
+}
+
+// Begins with '  <'
+func isMidElement(line []byte) bool {
+	return bytes.HasPrefix(line, []byte{32, 32, 60})
+}
+
+// Begins with '</'
+func isEndElement(line []byte) bool {
+	return bytes.HasPrefix(line, []byte{60, 47})
 }

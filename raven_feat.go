@@ -91,10 +91,11 @@ type scheduleCommand struct {
 }
 
 // Notify: ConnectionStatus
-type connectionStatus struct {
+type ConnectionStatus struct {
 	XMLName      xml.Name `xml:"ConnectionStatus"`
 	DeviceMacId  string   `xml:"DeviceMacId"`
 	MeterMacId   string   `xml:"MeterMacId"`
+	Status       string   `xml:"Status"`
 	Description  string   `xml:"Description,omitempty"`
 	StatusCode   string   `xml:"StatusCode,omitempty"`
 	ExtPanId     string   `xml:"ExtPanId,omitempty"`
@@ -104,7 +105,7 @@ type connectionStatus struct {
 }
 
 // Notify: DeviceInfo
-type deviceInfo struct {
+type DeviceInfo struct {
 	XMLName      xml.Name `xml:"DeviceInfo"`
 	DeviceMacId  string   `xml:"DeviceMacId"`
 	InstallCode  string   `xml:"InstallCode"`
@@ -118,7 +119,7 @@ type deviceInfo struct {
 }
 
 // Notify: ScheduleInfo
-type scheduleInfo struct {
+type ScheduleInfo struct {
 	XMLName     xml.Name `xml:"ScheduleInfo"`
 	DeviceMacId string   `xml:"DeviceMacId"`
 	MeterMacId  string   `xml:"MeterMacId,omitempty"`
@@ -128,7 +129,7 @@ type scheduleInfo struct {
 }
 
 // Notify: MeterList
-type meterList struct {
+type MeterList struct {
 	XMLName     xml.Name `xml:"MeterList"`
 	DeviceMacId string   `xml:"DeviceMacId"`
 	MeterMacId  []string `xml:"MeterMacId,omitempty"`

@@ -37,7 +37,7 @@ type setMeterInfo struct {
 }
 
 // Notify: MeterInfo
-type meterInfo struct {
+type MeterInfo struct {
 	XMLName     xml.Name `xml:"MeterInfo"`
 	DeviceMacId string   `xml:"DeviceMacId"`
 	MeterMacId  string   `xml:"MeterMacId"`
@@ -49,7 +49,7 @@ type meterInfo struct {
 }
 
 // Notify: NetworkInfo
-type networkInfo struct {
+type NetworkInfo struct {
 	XMLName      xml.Name `xml:"NetworkInfo"`
 	DeviceMacId  string   `xml:"DeviceMacId"`
 	CoordMacId   string   `xml:"CoordMacId"`
