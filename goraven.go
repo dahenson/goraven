@@ -3,11 +3,11 @@ package goraven
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/xml"
 	"errors"
 	"github.com/schleibinger/sio"
 	"syscall"
-	"bytes"
 )
 
 // Types of events
@@ -26,8 +26,10 @@ type Raven struct {
 
 // The structure for a simple command with a single argument (Name)
 type smplCommand struct {
-	XMLName xml.Name `xml:"Command"`
-	Name    string   `xml:"Name"`
+	XMLName    xml.Name `xml:"Command"`
+	Name       string   `xml:"Name"`
+	MeterMacId string   `xml:"MeterMacId,omitempty"`
+	Refresh    string   `xml:"Refresh,omitempty"`
 }
 
 // Connect opens a connection to a RAVEn, given the port name (/dev/ttyUSB0)
@@ -50,8 +52,11 @@ func (r *Raven) Close() error {
 }
 
 // simpleCommand sends a simple command
-func (r *Raven) simpleCommand(command string) error {
+func (r *Raven) simpleCommand(command string, refresh bool) error {
 	v := &smplCommand{Name: command}
+	if refresh {
+		v.Refresh = "Y"
+	}
 	return r.sendCommand(v)
 }
 
@@ -114,6 +119,8 @@ func (r *Raven) Receive() (notify interface{}, err error) {
 		notify = &NetworkInfo{}
 	case "MeterInfo":
 		notify = &MeterInfo{}
+	case "MessageCluster":
+		notify = &MessageCluster{}
 	default:
 		return nil, errors.New("Unrecognized Notify Message")
 	}

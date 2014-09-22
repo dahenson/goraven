@@ -14,10 +14,12 @@ var (
 	restart       bool
 	factory_reset bool
 	listen        bool
+	msgRefresh    bool
 	help          bool
 	restartMsg    = "Restart XML engine"
 	factoryMsg    = "Factory Reset"
 	listenMsg     = "Listen"
+	msgRefreshMsg = "Get Current Message"
 	showMsg       = "Show this message"
 	helpMsg       = "raven " + "(v" + VERSION + ") " +
 		"send commands to your raven device\n" +
@@ -25,6 +27,7 @@ var (
 		"\t-r " + restartMsg + " \n" +
 		"\t-f " + factoryMsg + " \n" +
 		"\t-l " + listenMsg + " \n" +
+		"\t-m " + msgRefreshMsg + "\n" +
 		"\t-h " + showMsg + " \n"
 )
 
@@ -32,6 +35,7 @@ func init() {
 	flag.BoolVar(&restart, "r", false, restartMsg)
 	flag.BoolVar(&factory_reset, "f", false, factoryMsg)
 	flag.BoolVar(&listen, "l", false, listenMsg)
+	flag.BoolVar(&msgRefresh, "m", false, msgRefreshMsg)
 	flag.BoolVar(&help, "h", false, showMsg)
 }
 
