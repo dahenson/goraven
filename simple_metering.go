@@ -2,6 +2,7 @@ package goraven
 
 import (
 	"encoding/xml"
+	"strconv"
 )
 
 // Get the demand information from the RAVEn. If refresh is true, the device
@@ -42,6 +43,46 @@ func (r *Raven) SetFastPoll() {
 func (r *Raven) GetProfileData() {
 }
 
+func (i *InstantaneousDemand) GetDemand() (float64, error) {
+	return getFloat64(i.Demand, i.Multiplier, i.Divisor)
+}
+
+func (c *CurrentSummationDelivered) GetSummationDelivered() (float64, error) {
+	return getFloat64(c.SummationDelivered, c.Multiplier, c.Divisor)
+}
+
+func (c *CurrentSummationDelivered) GetSummationReceived() (float64, error) {
+	return getFloat64(c.SummationReceived, c.Multiplier, c.Divisor)
+}
+
+func getFloat64(dem, mult, div string) (float64, error) {
+	i, err := strconv.ParseInt(dem, 0, 0)
+	demand := float64(i)
+	if err != nil {
+		return 0.0, err
+	}
+
+	i, err = strconv.ParseInt(mult, 0, 0)
+	multiplier := float64(i)
+	if multiplier == 0 {
+		multiplier = 1
+	}
+	if err != nil {
+		return 0.0, err
+	}
+
+	i, err = strconv.ParseInt(div, 0, 0)
+	divisor := float64(i)
+	if divisor == 0 {
+		divisor = 1
+	}
+	if err != nil {
+		return 0.0, err
+	}
+
+	return (demand * multiplier / divisor), nil
+}
+
 // Notify: InstantaneousDemand
 type InstantaneousDemand struct {
 	XMLName             xml.Name `xml:"InstantaneousDemand"`
@@ -73,11 +114,11 @@ type CurrentSummationDelivered struct {
 
 // Notify: CurrentPeriodUsage
 type CurrentPeriodUsage struct {
-	XMLName             xml.Name `xml:"InstantaneousDemand"`
+	XMLName             xml.Name `xml:"CurrentPeriodUsage"`
 	DeviceMacId         string   `xml:"DeviceMacId"`
 	MeterMacId          string   `xml:"MeterMacId"`
 	TimeStamp           string   `xml:"TimeStamp"`
-	CurrentUsage        string   `xml:"Demand"`
+	CurrentUsage        string   `xml:"CurrentUsage"`
 	Multiplier          string   `xml:"Multiplier"`
 	Divisor             string   `xml:"Divisor"`
 	DigitsRight         string   `xml:"DigitsRight"`
@@ -88,11 +129,11 @@ type CurrentPeriodUsage struct {
 
 // Notify: LastPeriodUsage
 type LastPeriodUsage struct {
-	XMLName             xml.Name `xml:"InstantaneousDemand"`
+	XMLName             xml.Name `xml:"LastPeriodUsage"`
 	DeviceMacId         string   `xml:"DeviceMacId"`
 	MeterMacId          string   `xml:"MeterMacId"`
 	TimeStamp           string   `xml:"TimeStamp"`
-	LastUsage           string   `xml:"Demand"`
+	LastUsage           string   `xml:"LastUsage"`
 	Multiplier          string   `xml:"Multiplier"`
 	Divisor             string   `xml:"Divisor"`
 	DigitsRight         string   `xml:"DigitsRight"`
