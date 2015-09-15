@@ -37,20 +37,28 @@ func (r *Raven) CloseCurrentPeriod() error {
 	return r.simpleCommand("close_current_period", false)
 }
 
+// Not Implemented
 func (r *Raven) SetFastPoll() {
 }
 
+// Not Implemented
 func (r *Raven) GetProfileData() {
 }
 
+// GetDemand() is a convenience function that returns a correctly formatted
+// floating point number for the Demand field
 func (i *InstantaneousDemand) GetDemand() (float64, error) {
 	return getFloat64(i.Demand, i.Multiplier, i.Divisor)
 }
 
+// GetSummationDelivered() is a convenience function that returns a correctly
+// formatted floating point number for the Current Summation Delivered field
 func (c *CurrentSummationDelivered) GetSummationDelivered() (float64, error) {
 	return getFloat64(c.SummationDelivered, c.Multiplier, c.Divisor)
 }
 
+// GetSummationReceived() is a convenience function that returns a correctly
+// formatted floating point number for the Current Summation Received field
 func (c *CurrentSummationDelivered) GetSummationReceived() (float64, error) {
 	return getFloat64(c.SummationReceived, c.Multiplier, c.Divisor)
 }
