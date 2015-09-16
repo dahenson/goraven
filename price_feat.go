@@ -18,6 +18,8 @@ func (r *Raven) GetCurrentPrice() error {
 func (r *Raven) SetCurrentPrice() {
 }
 
+// GetPrice() is a convenience function to get a correctly formatted
+// floating point number of the Price contained in the PriceCluster
 func (p *PriceCluster) GetPrice() (float64, error) {
 	price, err := strconv.ParseInt(p.Price, 0, 0)
 	if err != nil {
