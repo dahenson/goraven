@@ -125,6 +125,8 @@ func (r *Raven) Receive() (notify interface{}, err error) {
 		notify = &InstantaneousDemand{}
 	case "CurrentSummationDelivered":
 		notify = &CurrentSummationDelivered{}
+	case "TimeCluster":
+		notify = &TimeCluster{}
 	default:
 		return nil, errors.New("Unrecognized Notify Message")
 	}
