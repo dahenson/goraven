@@ -48,30 +48,33 @@ func (r *Raven) GetProfileData() {
 // GetDemand() is a convenience function that returns a correctly formatted
 // floating point number for the Demand field
 func (i *InstantaneousDemand) GetDemand() (float64, error) {
-	return getFloat64(i.Demand, i.Multiplier, i.Divisor)
+	return getFloat64(i.Demand, i.Multiplier, i.Divisor, i.DigitsLeft)
 }
 
 // GetSummationDelivered() is a convenience function that returns a correctly
 // formatted floating point number for the Current Summation Delivered field
 func (c *CurrentSummationDelivered) GetSummationDelivered() (float64, error) {
-	return getFloat64(c.SummationDelivered, c.Multiplier, c.Divisor)
+	return getFloat64(c.SummationDelivered, c.Multiplier, c.Divisor, c.DigitsLeft)
 }
 
 // GetSummationReceived() is a convenience function that returns a correctly
 // formatted floating point number for the Current Summation Received field
 func (c *CurrentSummationDelivered) GetSummationReceived() (float64, error) {
-	return getFloat64(c.SummationReceived, c.Multiplier, c.Divisor)
+	return getFloat64(c.SummationReceived, c.Multiplier, c.Divisor, c.DigitsLeft)
 }
 
-func getFloat64(dem, mult, div string) (float64, error) {
-	i, err := strconv.ParseInt(dem, 0, 0)
-	demand := float64(i)
+func getFloat64(dem, mult, div, digitsLeft string) (float64, error) {
+	rawDemand, err := strconv.ParseInt(dem, 0, 0)
 	if err != nil {
 		return 0.0, err
 	}
 
-	i, err = strconv.ParseInt(mult, 0, 0)
-	multiplier := float64(i)
+	digits, err := strconv.ParseInt(digitsLeft, 0, 0)
+	if err != nil {
+		return 0.0, err
+	}
+
+	multiplier, err := strconv.ParseInt(mult, 0, 0)
 	if multiplier == 0 {
 		multiplier = 1
 	}
@@ -79,8 +82,7 @@ func getFloat64(dem, mult, div string) (float64, error) {
 		return 0.0, err
 	}
 
-	i, err = strconv.ParseInt(div, 0, 0)
-	divisor := float64(i)
+	divisor, err := strconv.ParseInt(div, 0, 0)
 	if divisor == 0 {
 		divisor = 1
 	}
@@ -88,7 +90,18 @@ func getFloat64(dem, mult, div string) (float64, error) {
 		return 0.0, err
 	}
 
-	return (demand * multiplier / divisor), nil
+	d := (rawDemand % (pow10Int(digits) * divisor))
+
+	return ((float64(d) * float64(multiplier)) / float64(divisor)), nil
+}
+
+func pow10Int(p int64) int64 {
+	res := int64(10)
+
+	for i := int64(0); i < p-1; i++ {
+		res = res * 10
+	}
+	return res
 }
 
 // Notify: InstantaneousDemand
@@ -150,4 +163,3 @@ type LastPeriodUsage struct {
 	StartDate           string   `xml:"StartDate"`
 	EndDate             string   `xml:"EndDate"`
 }
-
